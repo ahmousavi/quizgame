@@ -13,6 +13,10 @@ var User = new mongoose.Schema({
         type: String,
         required: false,
         default: ""
+    },
+    token: {
+        type: String,
+        default: "",
         // unique: true,
     },
     admin: {
@@ -46,6 +50,6 @@ var User = new mongoose.Schema({
 }, 
 {
     timestamps: { createdAt: true, updatedAt: false },
-    collation: 'users',
+    // collation: 'users',
 })
 module.exports = mongoose.model('User', User)
