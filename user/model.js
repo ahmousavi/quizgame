@@ -12,7 +12,8 @@ var User = new mongoose.Schema({
     email: {
         type: String,
         required: false,
-        unique: true,
+        default: ""
+        // unique: true,
     },
     admin: {
         type: Boolean,
@@ -47,4 +48,4 @@ var User = new mongoose.Schema({
     timestamps: { createdAt: true, updatedAt: false },
     collation: 'users',
 })
-export default mongoose.model('User', User)
+module.exports = mongoose.model('User', User)
