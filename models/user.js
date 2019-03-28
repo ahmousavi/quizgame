@@ -14,11 +14,10 @@ var User = new mongoose.Schema({
         required: false,
         default: ""
     },
-    token: {
-        type: String,
-        default: "",
-        // unique: true,
-    },
+    // token: {
+    //     type: String,
+    //     default: "",
+    // },
     admin: {
         type: Boolean,
         default: false,
@@ -26,6 +25,10 @@ var User = new mongoose.Schema({
     level: {
         type: Number,
         default: 1,
+    },
+    coins: {
+        type: Number,
+        default: 0,
     },
     gamesPlayed: {
         type: Number,
@@ -50,6 +53,5 @@ var User = new mongoose.Schema({
 }, 
 {
     timestamps: { createdAt: true, updatedAt: false },
-    // collation: 'users',
 })
 module.exports = mongoose.model('User', User)

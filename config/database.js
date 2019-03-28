@@ -1,6 +1,10 @@
 var mongoose = require('mongoose')
+const {database_url} = require('.')
 mongoose.Promise = global.Promise
-mongoose.connect('mongodb://localhost:27017/quizofkings', { useNewUrlParser: true }).then(
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
+mongoose.connect(database_url, { useNewUrlParser: true }).then(
     () => {
         console.log('Database is connected')
     },
