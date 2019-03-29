@@ -11,31 +11,40 @@ router.post('/', (req, res) => {
     User.findOne({name: name})
         .then(user => {
             if (user) {
-                if (user.password === password) {
-                    let token = authentication.generateToken({
-                        "id":user._id,
-                        "admin": user.admin,
-                    })
-                    res.status(202).json({
-                        status: "success",
-                        message: "Login successful",
-                        data: {
-                            token: token,
-                        }
-                    })
-                }
-                else {
-                    res.status(401).json({
-                        status: "fail",
-                        message: "wrong password",
-                        data: {},
-                    })
-                }
+                user.checkPassword(password, (err, isMatch) => {
+                    if (err) {
+                        res.status(500).json({
+                            status: "fail",
+                            message: err.message,
+                            data: {},
+                        })
+                    }
+                    else if (isMatch){
+                        let token = authentication.generateToken({
+                            "id":user._id,
+                            "admin": user.admin,
+                        })
+                        res.status(202).json({
+                            status: "success",
+                            message: "Login successful",
+                            data: {
+                                token: token,
+                            }
+                        })
+                    }
+                    else {
+                        res.status(401).json({
+                            status: "fail",
+                            message: "Wrong password",
+                            data: {},
+                        })
+                    }
+                })
             }
             else {
                 res.status(404).json({
                     status: "fail",
-                    message: "user not found",
+                    message: "User not found",
                     data: {},
                 })
             }
