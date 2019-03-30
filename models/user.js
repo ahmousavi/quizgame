@@ -4,7 +4,8 @@ var userSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        unique: true,
+        unique: [true, "User name is taken"],
+        trim: true,
     },
     password: {
         type: String,
@@ -13,6 +14,8 @@ var userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: false,
+        trim: true,
+        lowercase: true,
         default: ""
     },
     // token: {
@@ -59,20 +62,34 @@ userSchema.pre('save', function(next) {
     let user = this
 
     if (!user.isModified('password')) return next()
-
+    
     // hash the password using our new salt
     bcrypt.hash(user.password, 10, function(err, hash) {
         if (err) return next(err);
-
         // override the cleartext password with the hashed one
         user.password = hash;
         next();
     });
 })
-userSchema.methods.checkPassword = function(candidatePassword, cb) {
+userSchema.path('name').validate(async (value) => {
+    const nameCount = await mongoose.models.User.countDocuments({name: value });
+    return !nameCount;
+}, 'Name already exists');
+userSchema.path('password').validate(async (value) => {
+    return value.length >= 8;
+}, 'Password is short');
+// userSchema.post('save', function(error, user, next) {
+//     if (error.name === 'MongoError' && error.code === 11000) {
+//         next(new Error('There was a duplicate key error'));
+//     } else {
+//         next(error);
+//     }
+// })
+
+userSchema.methods.checkPassword = function(candidatePassword, callback) {
     bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
-        if (err) return cb(err);
-        cb(null, isMatch);
+        if (err) return callback(err);
+        callback(null, isMatch);
     });
 };
 

@@ -40,7 +40,9 @@ router.route('/user')
             res.status(400).json({
                 status: "fail",
                 message: error.message,
-                data: {}
+                data: {
+                    error: error
+                }
             })
         })   
 })
