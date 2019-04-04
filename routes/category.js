@@ -1,39 +1,36 @@
 var express = require('express')
 var router = express.Router()
-var User = require('../models/user')
+var Category = require('../models/category')
 
-// route /api/user
+// route /api/category
 router.route('/')
-// get users (dev)
+// get categorys (dev)
 .get((req, res) => {
-    User.find({}, {}, (error, users) => {
+    Category.find({}, {}, (error, categories) => {
         if (error) {
-            res.status(400).json(error);
+            res.status(500).json(error);
         }
         else {
-            res.status(200).json(users)
+            res.status(200).json(categories)
         }
     }) 
     
 })
 
-// create new user
+// create new category
 .post((req, res) => {
-    let newUser = new User();
+    let newCategory = new Category();
 
-    newUser.name = req.body.name;
-    newUser.password = req.body.password;
+    newCategory.title = req.body.title;
 
-    newUser.save()
-        .then(user => {
+    newCategory.save()
+        .then(category => {
             res.status(201).json({
                 status: "success",
-                message: "Your account created",
+                message: "Category created",
                 data: {
-                    "name": user.name,
-                    "level": user.level,
-                    "coins": user.coins,
-                    "createdAt": user.createdAt,
+                    "title": category.title,
+                    "createdAt": category.createdAt,
                 }
             })
         })
@@ -48,15 +45,15 @@ router.route('/')
         })   
 })
 
-// update user data
+// update category data
 .put((req, res) => {
-    res.write('Update user')
+    res.write('Update category')
     res.send();
 })
 
-// delete user
+// delete category
 .delete((req, res) => {
-    res.write('Delete user')
+    res.write('Delete category')
     res.send();
 })
 

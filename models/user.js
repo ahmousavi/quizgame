@@ -4,7 +4,7 @@ var userSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        unique: [true, "User name is taken"],
+        unique: true,
         trim: true,
     },
     password: {
