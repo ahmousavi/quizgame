@@ -7,7 +7,7 @@ function generateToken(data) {
     if (typeof data !== 'object') {
         data = {}
     }
-    let token = jwt.sign({ data }, secret, { algorithm: 'HS256' })
+    let token = jwt.sign({ ...data }, secret, { algorithm: 'HS256' })
     return token;
 }
 
@@ -26,6 +26,14 @@ function verifyToken(token) {
     })
 }
 
+function authenticate(req) {
+    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+        return verifyToken(req.headers.authorization.split(' ')[1]);
+    }
+    else {
+        return null;
+    }
+}
 
 module.exports = {
     verifyToken,
