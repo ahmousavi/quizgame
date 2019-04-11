@@ -2,11 +2,12 @@ var cors = require('cors')
 var express = require('express')
 var bodyParser = require('body-parser')
 
-var userRoute = require('./routes/user')
-var categoryRoute = require('./routes/category')
-var questionRoute = require('./routes/question')
-var gameRoute = require('./routes/game')
-var authRoute = require('./routes/auth')
+var userRoute = require('./user/router')
+var authRoute = require('./user/auth.router')
+var categoryRoute = require('./question/category.router')
+var questionRoute = require('./question/router')
+var gameRoute = require('./game/router')
+
 const morgan = require('morgan')
 
 var app = express()

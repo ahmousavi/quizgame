@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const Game = require('../models/game');
+const Game = require('../game/model');
 
 // router for /api/game
 router.post('/', function(req, res) {

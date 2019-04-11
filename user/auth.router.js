@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var User = require('../models/user');
-const authentication = require('../controllers/authentication')
+var User = require('../user/model');
+const authentication = require('./authentication')
 // prefix /api/auth
 
 // login

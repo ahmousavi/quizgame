@@ -1,7 +1,7 @@
 var express = require('express')
 var router = express.Router()
-var Category = require('../models/category')
-const {verifyToken} = require('./../controllers/authentication')
+var Category = require('../question/category.model')
+const {verifyToken} = require('../user/authentication')
 // route /api/category
 router.route('/')
 // get categorys (dev)
