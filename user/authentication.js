@@ -26,16 +26,34 @@ function verifyToken(token) {
     })
 }
 
-function authenticate(req) {
+function checkToken(req, res, next) {
     if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-        return verifyToken(req.headers.authorization.split(' ')[1]);
+        verifyToken(req.headers.authorization.split(' ')[1])
+            .then(decoded => {
+                req.body.decodedData = decoded;
+                next();
+            })
+            .catch(err => {
+                res.status(401).send({
+                    status: "fail",
+                    message: err.message,
+                    data: {
+                        error: err,
+                    }
+                })
+            })
     }
     else {
-        return null;
+        res.status(401).send({
+            status: "fail",
+            message: "Token not found",
+            data: {}
+        })
     }
 }
 
 module.exports = {
     verifyToken,
     generateToken,
+    checkToken
 }
