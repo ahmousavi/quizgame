@@ -1,12 +1,11 @@
 var express = require('express')
 var router = express.Router()
 var Category = require('../question/category.model')
-const {verifyToken} = require('../user/authentication')
 // route /api/category
-router.route('/')
+
 // get categorys (dev)
-.get((req, res) => {
-    Category.find({}, {}, (error, categories) => {
+router.get('/', function(req, res) {
+    Category.find({}, {_id:0, __v:0}, (error, categories) => {
         if (error) {
             res.status(500).json(error);
         }
@@ -18,71 +17,48 @@ router.route('/')
 })
 
 // create new category
-.post(function(req, res) {
-    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-        let token = req.headers.authorization.split(' ')[1];
-        verifyToken(token).then(data => {
-            console.log("LOG", data);
-            
-            if (data.admin) {
-                let newCategory = new Category();
-                newCategory.title = req.body.title;
-                newCategory.save()
-                    .then(category => {
-                        res.status(201).json({
-                            status: "success",
-                            message: "Category created",
-                            data: {
-                                "title": category.title,
-                                "createdAt": category.createdAt,
-                            }
-                        })
-                    })
-                    .catch(error => {
-                        res.status(500).json({
-                            status: "fail",
-                            message: error.message,
-                            data: {
-                                error: error
-                            }
-                        })
-                    })   
-            }
-            else {
-                res.status(403).json({
-                    status: "fail",
-                    message: "You aren't an admin",
-                    data: {}
+router.post('/',function(req, res) {
+    if (req.body.decodedData.admin) {
+        let newCategory = new Category();
+        newCategory.title = req.body.title;
+        newCategory.save()
+            .then(category => {
+                res.status(201).json({
+                    status: "success",
+                    message: "Category created",
+                    data: {
+                        "title": category.title,
+                        "createdAt": category.createdAt,
+                    }
                 })
-            }
-        })
-        .catch(err => {
-            res.status(401).json({
-                status: "fail",
-                message: err.message,
-                data: {
-                    error: err,
-                }
             })
-        })
+            .catch(error => {
+                res.status(500).json({
+                    status: "fail",
+                    message: error.message,
+                    data: {
+                        error: error
+                    }
+                })
+            })   
     }
     else {
-        res.status(401).json({
+        res.status(403).json({
             status: "fail",
-            message: "token not found",
+            message: "You aren't an admin",
             data: {}
         })
     }
 })
 
 // update category data
-.put((req, res) => {
+router.put('/', (req, res) => {
     res.write('Update category')
     res.send();
 })
 
 // delete category
-.delete((req, res) => {
+router.delete('/', (req, res) => {
     res.write('Delete category')
     res.send();
 })

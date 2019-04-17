@@ -7,6 +7,7 @@ const authRoute = require('./user/auth.router')
 const categoryRoute = require('./question/category.router')
 const questionRoute = require('./question/router')
 const gameRoute = require('./game/router')
+const {checkToken} = require('./user/authentication')
 
 
 const morgan = require('morgan')
@@ -17,9 +18,11 @@ app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
 
 app.use(morgan('dev'))
+app.use(checkToken)
 app.use('/api/user', userRoute)
 app.use('/api/category', categoryRoute)
 app.use('/api/question', questionRoute)
 app.use('/api/game', gameRoute)
 app.use('/api/auth', authRoute)
+
 module.exports = app

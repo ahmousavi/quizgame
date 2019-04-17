@@ -1,6 +1,5 @@
-var express = require('express')
-var router = express.Router()
-var Question = require('../question/model')
+const router = require('express').Router()
+const Question = require('../question/model')
 
 // route /api/question
 router.route('/')
