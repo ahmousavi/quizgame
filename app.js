@@ -18,11 +18,11 @@ app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
 
 app.use(morgan('dev'))
-app.use(checkToken)
+app.use('/api/auth', authRoute)
 app.use('/api/user', userRoute)
+app.use(checkToken)
 app.use('/api/category', categoryRoute)
 app.use('/api/question', questionRoute)
 app.use('/api/game', gameRoute)
-app.use('/api/auth', authRoute)
 
 module.exports = app

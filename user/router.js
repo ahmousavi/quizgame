@@ -5,7 +5,7 @@ const {checkToken} = require('./authentication')
 // route /api/user
 
 // get users (dev)
-router.get('/', (req, res) => {    
+router.get('/', checkToken, (req, res) => {    
     User.findOne({name: req.body.name}, {_id:0, password:0, __v:0}, (error, user) => {
         if (error) {
             res.status(400).json(error);
@@ -53,13 +53,13 @@ router.post('/', (req, res) => {
 })
 
 // update user data
-router.put('/', (req, res) => {
+router.put('/', checkToken, (req, res) => {
     res.write('Update user')
     res.end();
 })
 
 // delete user
-router.delete('/', (req, res) => {
+router.delete('/', checkToken, (req, res) => {
     res.write('Delete user')
     res.end();
 })
