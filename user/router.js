@@ -8,7 +8,11 @@ const {checkToken} = require('./authentication')
 router.get('/', checkToken, (req, res) => {    
     User.findOne({name: req.body.name}, {_id:0, password:0, __v:0}, (error, user) => {
         if (error) {
-            res.status(400).json(error);
+            res.status(400).json({
+                status: "fail",
+                message: error.message,
+                data: error,
+            })
         }
         else {
             res.status(200).json({
