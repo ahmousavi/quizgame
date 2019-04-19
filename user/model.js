@@ -3,25 +3,24 @@ const bcrypt = require('bcrypt')
 var userSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true,
+        required: [true, "نام کاربری وارد نشده است"],
         unique: true,
         trim: true,
     },
     password: {
         type: String,
-        required: true,
+        required: [true, "رمز عبور وارد نشده است"],
     },
     email: {
         type: String,
-        required: false,
+        unique: true,
         trim: true,
         lowercase: true,
-        default: ""
     },
-    // token: {
-    //     type: String,
-    //     default: "",
-    // },
+    token: {
+        type: String,
+        default: "",
+    },
     admin: {
         type: Boolean,
         default: false,
@@ -60,9 +59,7 @@ var userSchema = new mongoose.Schema({
 })
 userSchema.pre('save', function(next) {
     let user = this
-
     if (!user.isModified('password')) return next()
-    
     // hash the password using our new salt
     bcrypt.hash(user.password, 10, function(err, hash) {
         if (err) return next(err);
@@ -71,20 +68,29 @@ userSchema.pre('save', function(next) {
         next();
     });
 })
-userSchema.path('name').validate(async (value) => {
-    const nameCount = await mongoose.models.User.countDocuments({name: value });
-    return !nameCount;
-}, 'Name already exists');
-userSchema.path('password').validate(async (value) => {
-    return value.length >= 8;
-}, 'Password is short');
-// userSchema.post('save', function(error, user, next) {
-//     if (error.name === 'MongoError' && error.code === 11000) {
-//         next(new Error('There was a duplicate key error'));
-//     } else {
-//         next(error);
-//     }
+// userSchema.pre('findOneAndUpdate', function(next) {
+//     let user = this
+//     console.log("## in update", user);
+
+    
+//     console.log("## AFTER");
+//     // hash the password using our new salt
+//     bcrypt.hash(user.password, 10, function(err, hash) {
+//         if (err) return next(err);
+//         // override the cleartext password with the hashed one
+//         user.password = hash;
+//         next();
+//     });
 // })
+
+userSchema.path('name').validate(async (value) => {
+    const nameCount = await mongoose.models.User.countDocuments({name: value});
+    return !nameCount;
+}, 'نام کاربری تکراری است');
+
+userSchema.path('password').validate(async (value) => {
+    return value.length >= 6;
+}, 'رمز عبور باید حداقل ۶ رقم باشد');
 
 userSchema.methods.checkPassword = function(candidatePassword, callback) {
     bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {

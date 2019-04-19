@@ -29,12 +29,12 @@ function verifyToken(token) {
 // middleware to check token
 function checkToken(req, res, next) {
 
-    console.log("Auth middleware called");
+    // console.log("Auth middleware called");
     
     if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
         verifyToken(req.headers.authorization.split(' ')[1])
             .then(decoded => {
-                req.body.decodedData = decoded;
+                req.decodedData = decoded;
                 next();
             })
             .catch(err => {
