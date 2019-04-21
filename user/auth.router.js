@@ -26,7 +26,7 @@ router.post('/', (req, res) => {
                         })
                         res.status(202).json({
                             status: "success",
-                            message: "Login successful",
+                            message: "شما با موفقیت وارد شدید",
                             data: {
                                 token: token,
                             }
@@ -35,7 +35,7 @@ router.post('/', (req, res) => {
                     else {
                         res.status(401).json({
                             status: "fail",
-                            message: "Wrong password",
+                            message: "اطلاعات کاربری اشتباه است",
                             data: {},
                         })
                     }
@@ -44,7 +44,7 @@ router.post('/', (req, res) => {
             else {
                 res.status(404).json({
                     status: "fail",
-                    message: "User not found",
+                    message: "اطلاعات کاربری اشتباه است",
                     data: {},
                 })
             }

@@ -79,67 +79,96 @@ router.post('/', (req, res) => {
 })
 
 // update user data
-router.put('/', checkToken, (req, res) => {
-    let user_id = req.decodedData.id;
-    let newData = {};
-    if (req.body.name) {
-        newData.name = req.body.name;
-    }
-    if (req.body.password) {
-        newData.password = req.body.password;
-    }
-    if (req.body.email) {
-        newData.email = req.body.email;
-    }
-    
-    User.findById(user_id, 
-        function(error, user) {
+router.put('/:name', checkToken, (req, res) => {
+    User.findOne({name: req.params.name}, 
+        (error, user) => {
             if (error) {
-                res.status(500).send({
+                res.status(500).json({
                     status: "fail",
                     message: error.message,
                     data: error,
                 })
             }
             if (user) {
-                if (req.body.name) {
-                    user.name = req.body.name;
-                }
-                if (req.body.password) {
-                    user.password = req.body.password;
-                }
-                if (req.body.email) {
-                    user.email = req.body.email;
-                }
-                user.save().then(() => {
-                    res.status(200).send({
-                        status: "success",
-                        message: "اطلاعات کاربری شما به روز شد",
-                        data: user,
+                if (user._id.equals(req.decodedData.id)) {
+                    if (req.body.name)
+                        user.name = req.body.name;
+                    if (req.body.password)
+                            user.password = req.body.password;
+                    if (req.body.email)
+                        user.email = req.body.email;
+                    user.save()
+                    .then(data => {
+                        res.status(200).json({
+                            status: "success",
+                            message: "اطلاعات کاربری شما بروز شد",
+                            data: data,
+                        });
                     })
-                })
-                .catch(error => {
-                    res.status(400).send({
+                    .catch(err => {
+                        res.status(500).json({
+                            status: "fail",
+                            message: err.message,
+                            data: err,
+                        });
+                    })
+                }
+                else if (req.decodedData.admin) {
+                    // TODO: admin edits
+                    res.status(200).json({
+                        status: "test",
+                        message: "این یعنی شما یک ادمین هستید و قصد دارید اطلاعات یک کاربر را تغییر دهید",
+                        data: {
+                            user,
+                            target,
+                        },
+                    });
+                }
+                else {
+                    res.status(403).json({
                         status: "fail",
-                        message: error.name,
-                        data: error,
-                    })
-                })
+                        message: "شما مجوز ویرایش اطلاعات این کاربر را ندارید",
+                        data: {},
+                    });
+                }
             }
             else {
-                res.status(404).send({
+                res.status(404).json({
                     status: "fail",
                     message: "کاربر با این مشخصات وجود ندارد",
-                    data: {}
-                })
+                    data: req.params.name,
+                });
             }
         })
 })
 
 // delete user
-router.delete('/', checkToken, (req, res) => {
-    res.write('Delete user')
-    res.end();
+router.delete('/:name', checkToken, (req, res) => {
+    if (req.decodedData.admin) {
+        User.updateOne({name: req.params.name}, {removed: true}, function(err, data) {
+            if (err) {
+                res.status(500).json({
+                    status: "fail",
+                    message: err.message,
+                    data: err,
+                })
+            }
+            else {
+                res.status(200).json({
+                    status: "success",
+                    message: "کاربر حذف شد",
+                    data: {},
+                })
+            }
+        })
+    }
+    else {
+        res.status(403).json({
+            status: "fail",
+            message: "شما مجوز حذف کاربر را ندارید",
+            data: {},
+        })
+    }
 })
 
 module.exports = router

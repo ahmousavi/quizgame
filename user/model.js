@@ -53,40 +53,36 @@ var userSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    removed: {
+        type: Boolean,
+        default: false
+    }
 }, 
 {
     timestamps: { createdAt: true, updatedAt: false },
 })
-userSchema.pre('save', function(next) {
-    let user = this
-    if (!user.isModified('password')) return next()
-    // hash the password using our new salt
-    bcrypt.hash(user.password, 10, function(err, hash) {
-        if (err) return next(err);
-        // override the cleartext password with the hashed one
-        user.password = hash;
-        next();
-    });
+userSchema.pre('save', async function(next) {
+    if (this.isModified('password')) {
+        try {
+            this.password = bcrypt.hashSync(this.password, 10);
+        }
+        catch (err) {
+            next(err);
+        }
+    }
+    if (this.isModified('name')) {
+        const nameCount = await mongoose.models.User.countDocuments({name: this.name})
+        if (nameCount) {
+            next(new Error('نام کابری تکراری است'))
+        }
+    }
+    next()
 })
-// userSchema.pre('findOneAndUpdate', function(next) {
-//     let user = this
-//     console.log("## in update", user);
 
-    
-//     console.log("## AFTER");
-//     // hash the password using our new salt
-//     bcrypt.hash(user.password, 10, function(err, hash) {
-//         if (err) return next(err);
-//         // override the cleartext password with the hashed one
-//         user.password = hash;
-//         next();
-//     });
-// })
-
-userSchema.path('name').validate(async (value) => {
-    const nameCount = await mongoose.models.User.countDocuments({name: value});
-    return !nameCount;
-}, 'نام کاربری تکراری است');
+// userSchema.path('name').validate(async (value) => {
+//     const nameCount = await mongoose.models.User.countDocuments({name: value});
+//     return !nameCount;
+// }, 'نام کاربری تکراری است');
 
 userSchema.path('password').validate(async (value) => {
     return value.length >= 6;
