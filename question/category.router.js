@@ -1,7 +1,6 @@
 var express = require('express')
 var router = express.Router()
 var Category = require('../question/category.model')
-// route /api/category
 
 // get categorys (dev)
 router.get('/', function(req, res) {
@@ -16,18 +15,24 @@ router.get('/', function(req, res) {
     
 })
 
-// create new category
+/* 
+create new category
+- request body format: { "title": "the category title" }
+- login required
+- admins only
+*/
 router.post('/',function(req, res) {
-    if (req.body.decodedData.admin) {
+    if (req.decodedData.admin) {
         let newCategory = new Category();
         newCategory.title = req.body.title;
         newCategory.save()
             .then(category => {
                 res.status(201).json({
                     status: "success",
-                    message: "Category created",
+                    message: "دسته بندی ایجاد شد",
                     data: {
                         "title": category.title,
+                        "questions": category.count,
                         "createdAt": category.createdAt,
                     }
                 })
@@ -45,21 +50,20 @@ router.post('/',function(req, res) {
     else {
         res.status(403).json({
             status: "fail",
-            message: "You aren't an admin",
+            message: "دسترسی مجاز نیست",
             data: {}
         })
     }
 })
 
-// update category data
-router.put('/', (req, res) => {
-    res.write('Update category')
+router.put('/:name', (req, res) => {
+    res.write('This part is in development yet');
     res.send();
 })
 
 // delete category
-router.delete('/', (req, res) => {
-    res.write('Delete category')
+router.delete('/:name', (req, res) => {
+    res.write('This part is in development yet');
     res.send();
 })
 

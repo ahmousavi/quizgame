@@ -1,10 +1,9 @@
 const router = require('express').Router()
 const Question = require('../question/model')
 
-// route /api/question
-router.route('/')
+
 // get questions (dev)
-.get((req, res) => {
+router.get('/', (req, res) => {
     Question.find({}, {})
         .populate('author')
         .populate('category')
@@ -20,9 +19,10 @@ router.route('/')
 })
 
 // create new question
-.post((req, res) => {
+router.post('/', (req, res) => {
     let newquestion = new Question();
 
+    // get the specific data from request body
     newquestion.text = req.body.text;
     newquestion.answer = req.body.answer;
     newquestion.choices = req.body.choices;
@@ -33,7 +33,7 @@ router.route('/')
         .then(question => {
             res.status(201).json({
                 status: "success",
-                message: "Question created",
+                message: "سوال شما ثبت شد و پس تایید در بازی قرار می گیرد",
                 data: {
                     "text": question.text,
                     "answer": question.answer,
@@ -43,7 +43,7 @@ router.route('/')
             })
         })
         .catch(error => {
-            res.status(400).json({
+            res.status(500).json({
                 status: "fail",
                 message: error.message,
                 data: {
@@ -54,14 +54,14 @@ router.route('/')
 })
 
 // update question data
-.put((req, res) => {
-    res.write('Update question')
+router.put('/', (req, res) => {
+    res.write('Update question is in development');
     res.send();
 })
 
 // delete question
-.delete((req, res) => {
-    res.write('Delete question')
+router.delete('/', (req, res) => {
+    res.write('Delete question is in development');
     res.send();
 })
 

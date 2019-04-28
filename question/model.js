@@ -6,11 +6,13 @@ var questionSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
+    // the correct answer
     answer: {
         type: String,
         required: true,
         trim: true,
     },
+    // the other options
     choices: {
         type: Array,
         required: true,
@@ -20,22 +22,31 @@ var questionSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category'
     },
-    confirmed: {
+
+    // noumber of positive vote to this question (when doesn't published yet)
+    votes: {
         type: Number,
         default: 0,
+    },
+    confirmed: {
+        type: Boolean,
+        default: false,
     },
     removed: {
         type: Boolean,
         default: false,
     },
+    // how many time was shown
     played: {
         type: Number,
         default: 0,
     },
+    // how many time players choose correct answer
     correct: {
         type: Number,
         default: 0,
     },
+    // average score from player feedback
     rating: {
         type: Number,
         default: 0,
