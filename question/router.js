@@ -28,7 +28,9 @@ router.post('/', (req, res) => {
     newquestion.choices = req.body.choices;
     newquestion.category = req.body.category;
     newquestion.author = req.body.author;
-
+    if (req.decodedDate.admin) {
+        newquestion.confirmed = true;
+    }
     newquestion.save()
         .then(question => {
             res.status(201).json({

@@ -10,12 +10,14 @@ var userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: [true, "رمز عبور وارد نشده است"],
+        minlength: [6, 'رمز عبور باید حداقل ۶ رقم باشد']    
     },
     email: {
         type: String,
         unique: true,
         trim: true,
         lowercase: true,
+        sparse: true
     },
     token: {
         type: String,
@@ -73,7 +75,10 @@ userSchema.pre('save', async function(next) {
     if (this.isModified('name')) {
         const nameCount = await mongoose.models.User.countDocuments({name: this.name})
         if (nameCount) {
-            next(new Error('نام کابری تکراری است'))
+            next({
+                name: 'ValidatorError',
+                message:'نام کاربری تکراری است'
+            })
         }
     }
     next()
@@ -84,9 +89,9 @@ userSchema.pre('save', async function(next) {
 //     return !nameCount;
 // }, 'نام کاربری تکراری است');
 
-userSchema.path('password').validate(async (value) => {
-    return value.length >= 6;
-}, 'رمز عبور باید حداقل ۶ رقم باشد');
+// userSchema.path('password').validate(async (value) => {
+//     return value.length >= 6;
+// }, 'رمز عبور باید حداقل ۶ رقم باشد');
 
 userSchema.methods.checkPassword = function(candidatePassword, callback) {
     bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {

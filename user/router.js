@@ -70,9 +70,10 @@ router.post('/', (req, res) => {
             })
         })
         .catch(error => {
+           
             res.status(400).json({
                 status: "fail",
-                message: error.name,
+                message: error.message,
                 data: error
             })
         })   
