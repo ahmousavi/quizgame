@@ -1,7 +1,7 @@
 var express = require('express')
 var router = express.Router()
 var User = require('./model')
-const {checkToken, generateToken} = require('./authentication')
+const { checkToken, generateToken } = require('./auth.controller')
 // route /api/user
 
 // get users (dev)
@@ -53,7 +53,7 @@ router.post('/', (req, res) => {
 
     newUser.save()
         .then(user => {
-            let token = generateToken({
+            let { access_token, refresh_token } = generateToken({
                 "id":user._id,
                 "admin": user.admin,
             })
@@ -64,7 +64,8 @@ router.post('/', (req, res) => {
                     name: user.name,
                     level: user.level,
                     coins: user.coins,
-                    token: token,
+                    access_token, 
+                    refresh_token,
                     createdAt: user.createdAt,
                 }
             })

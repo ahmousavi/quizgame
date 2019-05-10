@@ -7,7 +7,7 @@ const authRoute = require('./user/auth.router')
 const categoryRoute = require('./question/category.router')
 const questionRoute = require('./question/router')
 const gameRoute = require('./game/router')
-const {checkToken} = require('./user/authentication')
+const {checkToken} = require('./user/auth.controller')
 
 
 const morgan = require('morgan')

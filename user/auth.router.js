@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var User = require('../user/model');
-const authentication = require('./authentication')
+const auth = require('./auth.controller')
 // prefix /api/auth
 
 // login
@@ -20,7 +20,7 @@ router.post('/', (req, res) => {
                         })
                     }
                     else if (isMatch){
-                        let token = authentication.generateToken({
+                        let { access_token, refresh_token } = auth.generateToken({
                             "id":user._id,
                             "admin": user.admin,
                         })
@@ -28,7 +28,8 @@ router.post('/', (req, res) => {
                             status: "success",
                             message: "شما با موفقیت وارد شدید",
                             data: {
-                                token: token,
+                                access_token,
+                                refresh_token
                             }
                         })
                     }
@@ -58,11 +59,28 @@ router.post('/', (req, res) => {
         })
 
 })
+router.post('/token/refresh', checkToken, (req, res) => {
+    if (req.decodedData.refresh) {
+        
+        // TODO : find user and generate new token
 
+        // let { access_token, refresh_token } = auth.generateToken({
+        //     "id":user._id,
+        //     "admin": user.admin,
+        // })
+
+    }
+    else {
+        req.status(403).json({
+            status: "fail",
+            message: "use refersh token"
+        })
+    }
+})
 router.post('/test', (req, res) => {
     let {token} = req.body
     if (token) {
-        authentication.verifyToken(token)
+        auth.verifyToken(token)
         .then(data => {
             res.status(200).json({
                 status: "success",

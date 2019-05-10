@@ -1,4 +1,4 @@
-var User = require('../user/model');
+var User = require('./model');
 var jwt = require('jsonwebtoken');
 const { secret } = require('../config')
 
@@ -7,8 +7,12 @@ function generateToken(data) {
     if (typeof data !== 'object') {
         data = {}
     }
-    let token = jwt.sign({ ...data }, secret, { algorithm: 'HS256' })
-    return token;
+    let access_token = jwt.sign({ ...data }, secret, { algorithm: 'HS256' });
+    let refresh_token = jwt.sign({ ...data, refresh: true }, secret, { algorithm: 'HS256' });
+    return {
+        access_token,
+        refresh_token
+    };
 }
 
 // verify token and return decoded data
