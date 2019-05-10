@@ -59,7 +59,7 @@ router.post('/', (req, res) => {
         })
 
 })
-router.post('/token/refresh', checkToken, (req, res) => {
+router.post('/token/refresh', auth.checkToken, (req, res) => {
     if (req.decodedData.refresh) {
         
         // TODO : find user and generate new token
